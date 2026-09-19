@@ -1,0 +1,446 @@
+CREATE DATABASE hr_analytics;
+USE hr_analytics;
+
+DESCRIBE employees;
+
+/* Q1. Calculate the overall employee attrition rate. */
+
+SELECT ROUND(
+    (SELECT COUNT(*)
+     FROM employees
+     WHERE Attrition = 'Yes')
+    /
+    (SELECT COUNT(*)
+     FROM employees) * 100,
+    2
+) AS Attrition_rate;
+
+
+/* Q2. Find the total number of employees in each department. */
+
+SELECT Department, COUNT(*) AS Total_Employees
+FROM employees
+GROUP BY Department;
+
+
+/* Q3. Find the number of employees who left the company in each department. */
+
+SELECT Department, COUNT(*) AS Left_Employees
+FROM employees
+WHERE Attrition = 'Yes'
+GROUP BY Department;
+
+
+/* Q4. Calculate the number of employees who left in each department
+   using CASE WHEN. */
+
+SELECT
+    Department,
+    SUM(CASE
+        WHEN Attrition = 'Yes' THEN 1
+        ELSE 0
+    END) AS Left_Employees
+FROM employees
+GROUP BY Department;
+
+
+/* Q5. Calculate the attrition rate for each department. */
+
+SELECT
+    Department,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Department;
+
+
+/* Q6. Calculate the attrition rate based on overtime status. */
+
+SELECT
+    OverTime,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY OverTime;
+
+
+/* Q7. Calculate the attrition rate for each job role. */
+
+SELECT
+    JobRole,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY JobRole;
+
+
+/* Q8. Calculate the attrition rate based on salary groups:
+   Low, Medium and High. */
+
+SELECT
+    CASE
+        WHEN MonthlyIncome < 3000 THEN 'Low'
+        WHEN MonthlyIncome BETWEEN 3000 AND 7000 THEN 'Medium'
+        ELSE 'High'
+    END AS Salary_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY
+    CASE
+        WHEN MonthlyIncome < 3000 THEN 'Low'
+        WHEN MonthlyIncome BETWEEN 3000 AND 7000 THEN 'Medium'
+        ELSE 'High'
+    END;
+
+
+/* Q9. Calculate the attrition rate based on experience groups:
+   Low, Medium and High. */
+
+SELECT
+    CASE
+        WHEN TotalWorkingYears < 5 THEN 'Low'
+        WHEN TotalWorkingYears BETWEEN 5 AND 10 THEN 'Medium'
+        ELSE 'High'
+    END AS Experience_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY
+    CASE
+        WHEN TotalWorkingYears < 5 THEN 'Low'
+        WHEN TotalWorkingYears BETWEEN 5 AND 10 THEN 'Medium'
+        ELSE 'High'
+    END;
+
+
+/* Q10. Calculate the attrition rate based on years since last promotion. */
+
+SELECT
+    CASE
+        WHEN YearsSinceLastPromotion BETWEEN 0 AND 2 THEN 'Low'
+        WHEN YearsSinceLastPromotion BETWEEN 3 AND 5 THEN 'Medium'
+        ELSE 'Long'
+    END AS Promotion_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Promotion_Group;
+
+
+/* Q11. Calculate the attrition rate for each Work-Life Balance level. */
+
+SELECT
+    WorkLifeBalance,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY WorkLifeBalance
+ORDER BY WorkLifeBalance;
+
+
+/* Q12. Calculate the attrition rate based on age groups:
+   Young, Early Career, Mid Career and Senior. */
+
+SELECT
+    CASE
+        WHEN Age BETWEEN 18 AND 25 THEN 'Young'
+        WHEN Age BETWEEN 26 AND 35 THEN 'Early Career'
+        WHEN Age BETWEEN 36 AND 45 THEN 'Mid Career'
+        ELSE 'Senior'
+    END AS Age_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Age_Group;
+
+
+/* Q13. Calculate the attrition rate for each Job Involvement level. */
+
+SELECT
+    JobInvolvement,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY JobInvolvement
+ORDER BY JobInvolvement;
+
+
+/* Q14. Calculate the attrition rate based on Business Travel frequency. */
+
+SELECT
+    BusinessTravel,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY BusinessTravel;
+
+
+/* Q15. Calculate the attrition rate for each Job Level. */
+
+SELECT
+    JobLevel,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY JobLevel
+ORDER BY JobLevel;
+
+
+/* Q16. Calculate the attrition rate based on distance from home:
+   Near, Medium and Far. */
+
+SELECT
+    CASE
+        WHEN DistanceFromHome BETWEEN 1 AND 5 THEN 'Near'
+        WHEN DistanceFromHome BETWEEN 6 AND 15 THEN 'Medium'
+        ELSE 'Far'
+    END AS Distance_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Distance_Group;
+
+
+/* Q17. Calculate the attrition rate for each Marital Status. */
+
+SELECT
+    MaritalStatus,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY MaritalStatus;
+
+
+/* Q18. Calculate the attrition rate for each Job Satisfaction level. */
+
+SELECT
+    JobSatisfaction,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY JobSatisfaction
+ORDER BY JobSatisfaction;
+
+
+/* Q19. Calculate the attrition rate for each Environment Satisfaction level. */
+
+SELECT
+    EnvironmentSatisfaction,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY EnvironmentSatisfaction
+ORDER BY EnvironmentSatisfaction;
+
+
+/* Q20. Calculate the attrition rate based on years at the company:
+   New, Early Tenure, Mid Tenure and Long. */
+
+SELECT
+    CASE
+        WHEN YearsAtCompany BETWEEN 0 AND 2 THEN 'New'
+        WHEN YearsAtCompany BETWEEN 3 AND 5 THEN 'Early Tenure'
+        WHEN YearsAtCompany BETWEEN 6 AND 10 THEN 'Mid Tenure'
+        ELSE 'Long'
+    END AS Tenure_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Tenure_Group;
+
+
+/* Q21. Calculate the attrition rate based on Percent Salary Hike:
+   Low, Medium and High. */
+
+SELECT
+    CASE
+        WHEN PercentSalaryHike BETWEEN 11 AND 15 THEN 'Low'
+        WHEN PercentSalaryHike BETWEEN 16 AND 20 THEN 'Medium'
+        ELSE 'High'
+    END AS Salary_Hike,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Salary_Hike;
+
+
+/* Q22. Calculate the attrition rate for each Stock Option Level. */
+
+SELECT
+    StockOptionLevel,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) * 100.0 / COUNT(*),
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY StockOptionLevel
+ORDER BY StockOptionLevel;
+
+
+/* Q23. Calculate the attrition rate based on the number of companies
+   previously worked for: Low, Medium and High. */
+
+SELECT
+    CASE
+        WHEN NumCompaniesWorked BETWEEN 0 AND 2 THEN 'Low'
+        WHEN NumCompaniesWorked BETWEEN 3 AND 5 THEN 'Medium'
+        ELSE 'High'
+    END AS Num_Companies,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Num_Companies;
+
+
+/* Q24. Calculate the attrition rate based on years in the current role. */
+
+SELECT
+    CASE
+        WHEN YearsInCurrentRole BETWEEN 0 AND 2 THEN 'Low'
+        WHEN YearsInCurrentRole BETWEEN 3 AND 5 THEN 'Medium'
+        WHEN YearsInCurrentRole BETWEEN 6 AND 10 THEN 'High'
+        ELSE 'Very High'
+    END AS Years_In_Current_Role,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Years_In_Current_Role;
+
+
+/* Q25. Calculate the attrition rate based on training received
+   in the last year. */
+
+SELECT
+    CASE
+        WHEN TrainingTimesLastYear BETWEEN 0 AND 2 THEN 'Low'
+        WHEN TrainingTimesLastYear BETWEEN 3 AND 5 THEN 'Medium'
+        ELSE 'High'
+    END AS Training_Group,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Training_Group;
+
+
+/* Q26. Calculate the attrition rate based on years with the current manager. */
+
+SELECT
+    CASE
+        WHEN YearsWithCurrManager BETWEEN 0 AND 2 THEN 'Low'
+        WHEN YearsWithCurrManager BETWEEN 3 AND 5 THEN 'Medium'
+        WHEN YearsWithCurrManager BETWEEN 6 AND 10 THEN 'High'
+        ELSE 'Very High'
+    END AS Years_With_Current_Manager,
+    ROUND(
+        SUM(CASE
+            WHEN Attrition = 'Yes' THEN 1
+            ELSE 0
+        END) / COUNT(*) * 100,
+        2
+    ) AS Attrition_Rate
+FROM employees
+GROUP BY Years_With_Current_Manager;
